@@ -59,17 +59,13 @@ func (s *Server) CreateAsset(ctx context.Context, asset *pb.CreateAssetReq) (*pb
 }
 
 func (s *Server) GetAsset(ctx context.Context, asset *pb.AssetReq) (*pb.ListAssetResp,error){
- 
 	var assetResp = pb.ListAssetResp{}
 	assets, err := asc.store.GetAsset(ctx, asset)
 	if err != nil {
 	fmt.Println("error::in list assets in asset service", err )
 	}
-	fmt.Println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::")
-	fmt.Println(len(assets))
-	fmt.Println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::")
 	for _,a := range assets{
-	tags := strings.Split(a.Tags, ",")
+	 tags := strings.Split(a.Tags, ",")
 	 as:=pb.Asset{
 	 Url : a.URL,
 	 AssetType: a.AssetType,
@@ -94,7 +90,6 @@ func NewService(s db.Storer, l *zap.SugaredLogger) Service {
 }
 
 func(as *assetService) Dbconnection(){
-	asc = as
-	fmt.Println("asc::",asc)
+	asc = as	
 }
 

@@ -1,7 +1,6 @@
 package db
 
-import (
-	"strings"
+import (	
 	"context"
 	"fmt"
 	
@@ -27,6 +26,8 @@ type Asset struct {
 	Owner       string `db:"owner"`
 	Private     bool   `db:"private"`
 	Tags        string `db:"tags"`
+	Limit       int32
+	Offset      int32
 }
 
 type AssetResponse struct {
@@ -55,7 +56,7 @@ func (s *store) CreateAsset(ctx context.Context, asset *Asset) (assetResponse As
 		asset.Private,
 		asset.Tags,
 		now,
-	)
+		)
 	fmt.Println("assetResp:::", assetResponse)
 
 	return
@@ -68,35 +69,32 @@ func (s *store) GetAsset(ctx context.Context, assetReq *pb.AssetReq) ([]AssetRes
     
 
 	var assets = make([]AssetResponse, 0)
-	var assetsType = make([]string, 0)
+	var assetsType [3]string
+	fmt.Println("assets type", assetsType)
 	if assetReq.Video == true{
-		assetsType = append(assetsType, "video")
+		assetsType[0] = "video"
 	}
 	if assetReq.Audio == true{
-		assetsType =append(assetsType, "audio")
+		assetsType[1] = "audio"
 	}
 	if assetReq.Image == true{
-		assetsType =append(assetsType, "image")
+		assetsType[2] = "image"
 	}
-	fmt.Println("I cam in GetAsset")
-	
-	param := "{" + strings.Join(assetsType, ",") + "}"
-	fmt.Println("Params", param)
-	
-	fmt.Println(assetReq.Id)
 
-
+	fmt.Println("assetType", assetsType)
 	if assetReq.Id != ""{
-		fmt.Println("************************************************************")
-		listAssetsQuery0 := listAssetsQuery + `string_to_array() && array[assetsType] `
-		err = s.db.SelectContext(ctx, &assets, listAssetsQuery0, pq.Array([]string{"7a6c3539-bf3c-4adf-8b0c-ac97977ee33f","fb3a7d45-a55a-4ef9-a5e2-30a47207d409"}), pq.Array(assetsType))
-	} else {
-		if assetReq.Tag != "" && assetReq.Private == true {
-        	listAssetsQuery1 := listAssetsQuery + `owner = $1 `	
-			err = s.db.SelectContext(ctx, &assets, listAssetsQuery1, assetReq.Owner)		
+		listAssetsQuery0 := listAssetsQuery + `id = $1 order by created_at limit $2 offset $3` 
+        err = s.db.SelectContext(ctx, &assets, listAssetsQuery0, assetReq.Id, assetReq.Limit,assetReq.Offset )
 		} else {
-			listAssetsQuery2 := listAssetsQuery + ` tags = $1 AND asset_type = ANY ($3) and private = false`
-			err = s.db.SelectContext(ctx, &assets, listAssetsQuery2, assetReq.Tag, param, assetReq.Private)
+		if assetReq.Tag != "" && assetReq.Private == true {
+			fmt.Println("inside else if")
+        	listAssetsQuery1 := listAssetsQuery + `owner = $1 and asset_type = ANY($2) or string_to_array(tags, ',') && array['`+assetReq.Tag+`'] order by created_at limit $3 offset $4`	
+			err = s.db.SelectContext(ctx, &assets, listAssetsQuery1, assetReq.Owner, pq.Array(assetsType), assetReq.Limit, assetReq.Offset )		
+		} else {
+			fmt.Println("inside else")
+			fmt.Println("tags",assetReq.Tag)
+			listAssetsQuery2 := listAssetsQuery + `asset_type = ANY($1)  and private = false or string_to_array(tags, ',') && array['`+assetReq.Tag+`'] order by created_at limit  $2 offset $3`
+			err = s.db.SelectContext(ctx, &assets, listAssetsQuery2, pq.Array(assetsType), assetReq.Limit,assetReq.Offset)
 		}
 	}
 	
@@ -106,3 +104,4 @@ func (s *store) GetAsset(ctx context.Context, assetReq *pb.AssetReq) ([]AssetRes
 func (s *store) DB() store {
 	return *s
 }
+

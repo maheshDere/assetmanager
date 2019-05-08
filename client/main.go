@@ -38,23 +38,23 @@ func main() {
 	}
 	
     // asset := &pb.CreateAssetReq{
-	// 	Caption : "sport",
-	// 	Description : "sport is go for health",
-	// 	Url: "abc.com",
-	// 	AssetType: "image",
+	// 	Caption : "Study",
+	// 	Description : "must study",
+	// 	Url: "s.com",
+	// 	AssetType: "audio",
 	// 	Source : "S3",
-	// 	Owner :	"058ece9b-a1b2-4135-9b0d-d28fcb6aa169",
-	// 	Private : true,
-    //     Tags: []string{"cricket", "sport", "football"},
+	// 	Owner :	"058ece9b-a1b2-4135-9b0d-d28fcb6aa162",
+	// 	Private : false,
+    //     Tags: []string{"study", "student", "teacher"},
 		
 	// }
 	assetReq := &pb.AssetReq{
-		Id:" 7a6c3539-bf3c-4adf-8b0c-ac97977ee33f",
-		Tag: "cricket",
+		Id:"",
+		Tag: "",
 		Owner :	"058ece9b-a1b2-4135-9b0d-d28fcb6aa169",
-		Private : true,
+		Private : false,
 		Video  : true, 
-		Audio   :true,
+		Audio   :false,
 		Image :true,
 		Limit: 10,
 		Offset: 0,		
