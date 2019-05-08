@@ -1,10 +1,10 @@
 package server
 
 import (
+	"net"
+	"log"
 	"fmt"
 	"strconv"
-    "net"
-	"log"
 	"google.golang.org/grpc"
 	pb "github.com/maheshDere/assetmanager/assetproto" 
 	"github.com/maheshDere/assetmanager/config"
@@ -13,21 +13,26 @@ import (
 
 func StartAPIServer() {
 	port := config.AppPort()
-	p:=string(port)
 	
-	dependencies, err := initDependencies()
+	p := strconv.Itoa(port)
+	
+	fmt.Println("p",p)
+	
+	_, err := initDependencies()
 	if err != nil {
 		panic(err)
 	}
 	
-	lis, err := net.Listen("tcp", p)
+	server := asset.Server{}
+
+	lis, err := net.Listen("tcp",":"+p)
 	
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	
 	s := grpc.NewServer()
-	pb.RegisterCustomerServer(s, &asset.Server{})
+	pb.RegisterAssetServiceServer(s, &server)
 	s.Serve(lis)
 	
 }

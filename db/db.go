@@ -8,6 +8,8 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
+	pb "github.com/maheshDere/assetmanager/assetproto"
+
 )
 
 type ctxKey int
@@ -20,11 +22,8 @@ const (
 type Storer interface {
 	//Assets
 	CreateAsset(ctx context.Context, dream *Asset,) (assetResponse AssetResponse, err error)
-	// ListAssets(ctx context.Context, id ,assetType string) (assets []AssetResponse, err error)
-	// DeleteAsset(ctx context.Context, id, userID string) (err error)
-	// ListPublicAssets(ctx context.Context, assetType string) ([]AssetResponse, error)
-	// FindByIDAsset(ctx context.Context, assetID  string)(assetResponse AssetResponse,err error)
-    DB()(s store)
+	GetAsset(ctx context.Context, assetReq *pb.AssetReq) ([]AssetResponse, error)
+	DB()(s store)
 }
 
 type store struct {

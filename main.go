@@ -7,7 +7,6 @@ import (
 	"github.com/maheshDere/assetmanager/config"
 	"github.com/maheshDere/assetmanager/db"
 	"github.com/maheshDere/assetmanager/server"
-	//"github.com/maheshDere/assetmanager/grpc/demo"
 	"github.com/urfave/cli"
 
 )

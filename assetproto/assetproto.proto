@@ -2,9 +2,9 @@ syntax = "proto3";
 package assetproto;
 
 service AssetService {
-   rpc CreateAsset(CreateAssetReq) returns (ListAssetResp) { }
-   rpc GetAsset(AssetReq) returns (ListAssetResp) { }
-   rpc GetMediaLibrary(AssetReq) returns (ListAssetResp) { }
+   rpc CreateAsset(CreateAssetReq) returns (ListAssetResp) {}
+   rpc GetAsset(AssetReq) returns (ListAssetResp) {}
+   rpc GetMediaLibrary(AssetReq) returns (ListAssetResp) {}
 }
 
 message CreateAssetReq {
@@ -21,11 +21,11 @@ message CreateAssetReq {
 message AssetReq {
    string id = 1;   // find by ID (overrides all else)
    string tag = 2;  // find by tag
-   string owner = 3;  // (mandatory only if private is true)
+   string owner = 3; // (mandatory only if private is true)
    bool private = 4; // if true, return owner's assets otherwise public assets
    bool video = 5;    
    bool audio = 6;
-   bool image = 7;
+   bool image = 7;     
    int32 limit = 8;  // max number of assets (default: 100)
    int32 offset = 9; // pangination support. 
 }
@@ -40,5 +40,6 @@ message Asset {
 }
 
  message ListAssetResp{
- repeated Asset assets = 1;
+ int32 count = 1;   
+ repeated Asset assets = 2;
 }
